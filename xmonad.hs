@@ -15,6 +15,9 @@ import XMonad.Util.SpawnOnce (spawnOnce, spawnOnOnce)
 import XMonad.Hooks.EwmhDesktops (ewmh, ewmhFullscreen)
 import XMonad.Hooks.ManageDocks (avoidStruts)
 import XMonad.Hooks.ManageHelpers
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.StatusBar
+import XMonad.Hooks.StatusBar.PP
 
 import XMonad.Layout
 import XMonad.Layout.ThreeColumns
@@ -35,7 +38,14 @@ import XMonad.Prompt.Input
 import XMonad.Prompt.Shell
 
 main :: IO ()
-main = xmonad $ ewmhFullscreen $ ewmh $ withNavigation2DConfig def $ myConfig
+main = (xmonad
+     . ewmhFullscreen
+     . ewmh
+     . withNavigation2DConfig def)
+     =<< statusBar "xmobar" def toggleStrutsKey myConfig
+  where
+    toggleStrutsKey :: XConfig Layout -> (KeyMask, KeySym)
+    toggleStrutsKey XConfig{ modMask = m } = (m, xK_b)
 
 myConfig = def
   { terminal           = "alacritty"
