@@ -215,13 +215,13 @@ buildPrompt :: forall a. MyPrompt a => X ()
 buildPrompt = inputPromptWithCompl myXPConfig (name @a) promptCompl ?+ (handler @a)
   where
     promptCompl = mkComplFunFromList' myXPConfig (compl @a)
-
+    
 searchPrompt = promptSearchBrowser myXPConfig "firefox" duckduckgo
 
 data RunScript
 
 instance MyPrompt RunScript where
-  name  = "Spawn workspace"
+  name  = "Script"
   compl = ["Test"]
   
   handler input = spawn script
