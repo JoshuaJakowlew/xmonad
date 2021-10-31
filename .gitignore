@@ -1,4 +1,6 @@
-.stack_work/
+.stack-work/
+.xmonad/
+.xmonad-contrib/
 xmonad.bkp.hs
 xmonad.test.hs
 xmonad.dev.hs
