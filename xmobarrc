@@ -1,0 +1,33 @@
+Config
+  { font = "xft:Fira Code,Fira Code Medium:style=Medium,Regular"
+  , additionalFonts = []
+  , bgColor = "#282828"
+  , fgColor = "#ebdbb2"
+  , alpha = 255
+  , position = Top
+  , textOffset = -1 -- center vertically
+  , iconOffset = -1
+  , lowerOnStart = True
+  , hideOnStart = False
+  , allDesktops = True
+  , overrideRedirect = True
+  , persistent = False
+  , border = NoBorder
+  , borderColor = "#b16286"
+  , borderWidth = 2
+  , pickBroadest = False
+  , iconRoot = "."
+  , commands = 
+      [ Run XMonadLog
+      , Run Date "%a %b %_d %Y %H:%M:%S" "date" 10
+      , Run Network "wlan0" ["-t", "<rx>:<tx>", "-S", "True", "-m", "7"] 10
+      , Run Memory ["-t", "<usedratio>%", "-p", "2"] 10
+      , Run Cpu ["-t", "<total>%", "-p", "2"] 10
+      , Run Kbd [("English", "ru"), ("us", "ru")]
+      , Run DiskU [("/", "<used>/<size>")] [] 20
+      , Run DiskIO [("/", "<read> <write>")] [] 10
+      ]
+  , sepChar = "%"
+  , alignSep = "}{"
+  , template = "%XMonadLog% } <fc=#ee9a00>%date%</fc>{%kbd% | %cpu% | %memory% | %wlan0% | %disku% | %diskio%"
+  }

@@ -1,8 +1,15 @@
-{-# LANGUAGE ScopedTypeVariables, TypeApplications, AllowAmbiguousTypes, RankNTypes, FlexibleContexts #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications    #-}
+{-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE RankNTypes          #-}
+{-# LANGUAGE FlexibleContexts    #-}
 
 module Main where
 
 import qualified Data.Map as M
+import qualified DBus as D
+import qualified DBus.Client as D
+import qualified Codec.Binary.UTF8.String as UTF8
 
 import XMonad
 import qualified XMonad.StackSet as W
@@ -11,13 +18,15 @@ import XMonad.Operations (windows)
 import XMonad.Util.EZConfig (mkKeymap)
 import XMonad.Util.Ungrab (unGrab)
 import XMonad.Util.SpawnOnce (spawnOnce, spawnOnOnce)
+import XMonad.Util.Loggers
 
 import XMonad.Hooks.EwmhDesktops (ewmh, ewmhFullscreen)
 import XMonad.Hooks.ManageDocks (avoidStruts)
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.StatusBar
-import XMonad.Hooks.StatusBar.PP
+import XMonad.Hooks.ManageDocks
+-- import XMonad.Hooks.StatusBar
+-- import XMonad.Hooks.StatusBar.PP
 
 import XMonad.Layout
 import XMonad.Layout.ThreeColumns
@@ -37,15 +46,17 @@ import XMonad.Prompt.FuzzyMatch (fuzzyMatch, fuzzySort)
 import XMonad.Prompt.Input
 import XMonad.Prompt.Shell
 
+mySB = statusBarProp "xmobar ~/.xmonad/xmobarrc" (pure myPPConfig)
+
 main :: IO ()
-main = (xmonad
+main = xmonad
+     . withNavigation2DConfig def
      . ewmhFullscreen
      . ewmh
-     . withNavigation2DConfig def)
-     =<< statusBar "xmobar" def toggleStrutsKey myConfig
-  where
-    toggleStrutsKey :: XConfig Layout -> (KeyMask, KeySym)
-    toggleStrutsKey XConfig{ modMask = m } = (m, xK_b)
+     . docks
+     . withSB mySB
+     $ myConfig
+  
 
 myConfig = def
   { terminal           = "alacritty"
@@ -61,6 +72,7 @@ myConfig = def
   , startupHook        = myStartupHook
   , layoutHook         = myLayoutHook
   , manageHook         = manageHook def <+> myManageHook
+  , logHook = dynamicLogWithPP def
   }
 
 myXPConfig = def
@@ -75,7 +87,17 @@ myXPConfig = def
   , sorter            = fuzzySort
   }
 
-myWorkspaces = ["\63083", "\63288", "\63306", "\61723", "\63107", "\63601", "\63391", "\61713", "\61884"]
+myPPConfig = def
+  { ppCurrent = \w -> "<fc=#ee9a00>" ++ w ++ "</fc>"
+  , ppHidden = \w -> w
+  , ppHiddenNoWindows = \w -> w
+  , ppSep = " |> "
+  , ppWsSep = " | "
+  , ppTitle = \t -> shorten 25 t
+  , ppLayout = const ""
+  }
+
+myWorkspaces = digitKeys -- ["\63083", "\63288", "\63306", "\61723", "\63107", "\63601", "\63391", "\61713", "\61884"]
 
 myKeymap = \c
   -> appKeys c
@@ -152,14 +174,15 @@ popupKeys =
   , ("M-s"  , spawn leftPopup)
   , ("M-S-s", spawn ewwclose )  
   , ("M-v"  , spawn clipboard)
-  , ("M-b"  , spawn bartoggle)
+  -- , ("M-b"  , spawn bartoggle)
+  , ("M-b"  , sendMessage ToggleStruts)
   ]
   where
     launcher  = "rofi -no-lazy-grab -show drun -modi run,drun,window -theme $HOME/.config/rofi/launcher/style"
     ewwclose  = "exec ~/bin/eww close-all"
     leftPopup = "exec ~/bin/eww open-many weather_side time_side smol_calendar player_side sys_side sliders_side"    
     clipboard = "rofi -modi \"clipboard:greenclip print\" -show clipboard -run-command '{cmd}' -theme ~/.config/rofi/launcher/style.rasi"
-    bartoggle = "exec ~/bin/bartoggle"
+    -- bartoggle = "exec ~/bin/bartoggle"
 
 audioKeys =
   [ ("<XF86AudioPlay>", spawn "playerctl play-pause" )
@@ -174,7 +197,7 @@ promptKeys =
   ]
 
 myStartupHook = do
-  spawnOnce "exec ~/bin/bartoggle"
+--  spawnOnce "exec ~/bin/bartoggle"
   spawnOnce "exec ~/bin/eww daemon"
   spawnOnce "xsetroot -cursor_name left_ptr"
   spawnOnce "feh --bg-scale ~/.xmonad/bg-gruvbox.png"
@@ -185,10 +208,10 @@ myStartupHook = do
   spawnOnce "/etc/X11/xinit/xinitrc.d/50-systemd-user.sh ~/.xinitrc"
   spawnOnce "exec redshift -l 54.790311:32.050366"
 
-myLayoutHook = smartBorders
+myLayoutHook = avoidStruts
+             $ smartBorders
              $ minimize
              $ maximizeWithPadding 0
-             $ avoidStruts
              $ layout
   where
     layout = tiled
