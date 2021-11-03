@@ -1,0 +1,132 @@
+;==========================================================
+;
+;
+;   ██████╗  ██████╗ ██╗  ██╗   ██╗██████╗  █████╗ ██████╗
+;   ██╔══██╗██╔═══██╗██║  ╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗
+;   ██████╔╝██║   ██║██║   ╚████╔╝ ██████╔╝███████║██████╔╝
+;   ██╔═══╝ ██║   ██║██║    ╚██╔╝  ██╔══██╗██╔══██║██╔══██╗
+;   ██║     ╚██████╔╝███████╗██║   ██████╔╝██║  ██║██║  ██║
+;   ╚═╝      ╚═════╝ ╚══════╝╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
+;
+;
+;   To learn more about how to configure Polybar
+;   go to https://github.com/polybar/polybar
+;
+;   The README contains a lot of information
+;
+;==========================================================
+
+[colors]
+background = #282828
+foreground = #ebdbb2
+
+n-black    = #282828
+n-red      = #cc241d
+n-green    = #98971a
+n-yellow   = #d79921
+n-blue     = #458588
+n-magenta  = #b16286
+n-cyan     = #689d6a
+n-white    = #a89984
+
+b-black    = #928374
+b-red      = #fb4934
+b-green    = #b8bb26
+b-yellow   = #fabd2f
+b-blue     = #83a598
+b-magenta  = #d3869b
+b-cyan     = #8ec07c
+b-white    = #ebdbb2
+
+[bar/top]
+width = 100%
+;height = 27
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+overline-size = 2
+underline-size = 2
+ 
+padding-left = 2.5%
+padding-right = 2.5%
+
+module-margin-left = 1%
+module-margin-right = 2%
+
+font-0 = Fira Code:style=Regular:pixelsize=10;1
+font-1 = fixed:pixelsize=10;1
+font-2 = Twitter Color Emoji:style=Regular:scale=10;1
+
+modules-left = xmonad
+modules-center = date
+modules-right = updates-pacman-aurhelper info-hackspeed cpu memory network xkeyboard
+
+[module/xmonad]
+type = custom/script
+exec = xmonad-log
+
+tail = true
+
+[module/date]
+type = internal/date
+interval = 1.0
+date = %A, %d-%m-%Y
+time = %H:%M
+
+format-foreground = ${colors.b-yellow}
+label = %date% %time%
+
+[module/xkeyboard]
+type = internal/xkeyboard
+format = <label-layout>
+
+format-foreground = ${colors.b-red}
+format-overline = ${colors.b-red}
+label-layout = =<< %layout% >>=
+
+[module/network]
+type = internal/network
+interface = wlan0
+interval = 3.0
+accumulate-stats = true
+unknown-as-up = true
+
+label-connected = NET%{F#b8bb26}%downspeed:9%%{F-}%{F#fb4934}%upspeed:9%%{F-}
+label-disconnected = not connected
+
+format-connected-overline = ${colors.n-cyan}
+
+[module/cpu]
+type = internal/cpu
+interval = 1
+format-overline = ${colors.n-magenta}
+label = CPU %percentage:2%%
+
+[module/memory]
+type = internal/memory
+interval = 1
+format-overline = ${colors.n-green}
+label = RAM %percentage_used:2%%
+
+[module/updates-pacman-aurhelper]
+type = custom/script
+exec = ~/.xmonad/polybar/scripts/updates-pacman-aurhelper/updates-pacman-aurhelper.sh
+interval = 600
+label = UPD %output%
+format-overline = ${colors.n-red}
+
+[module/player-mpris-simple]
+type = custom/script
+exec = ~/.xmonad/polybar/scripts/player-mpris-simple/player-mpris-simple.sh
+interval = 3
+click-left = playerctl previous &
+click-right = playerctl next &
+click-middle = playerctl play-pause &
+
+[module/info-hackspeed]
+type = custom/script
+exec = ~/.xmonad/polybar/scripts/info-hackspeed/info-hackspeed.sh
+tail = true
+label = "%output%"
+format-overline = ${colors.n-blue}
