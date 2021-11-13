@@ -223,7 +223,7 @@ myStartupHook = do
   spawnOnce "polybar -r -c ~/.xmonad/polybar/polybar top"
   spawnOnce "exec ~/bin/eww daemon"
   spawnOnce "xsetroot -cursor_name left_ptr"
-  spawnOnce "feh --bg-scale ~/.xmonad/bg-gruvbox.png"
+  spawnOnce "feh --bg-scale ~/.xmonad/assets/images/bg-gruvbox.png"
   spawnOnce "picom"
   spawnOnce "greenclip daemon"
   spawnOnce "python ~/bin/jakowlew/getweather.py"
