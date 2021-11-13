@@ -8,3 +8,4 @@ xmonad.dev.hs
 xmonad.errors
 xmonad.hi
 xmonad.o
+prompt-history
