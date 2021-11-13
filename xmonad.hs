@@ -11,6 +11,11 @@ import Data.List (sortBy)
 import Data.Function (on)
 import Control.Monad (forM_, join)
 
+-- Imports for Polybar --
+import qualified Codec.Binary.UTF8.String              as UTF8
+import qualified DBus                                  as D
+import qualified DBus.Client                           as D
+
 import XMonad
 import qualified XMonad.StackSet as W
 import XMonad.Operations (windows)
@@ -26,13 +31,6 @@ import XMonad.Hooks.EwmhDesktops (ewmh, ewmhFullscreen)
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicLog
--- import XMonad.Hooks.StatusBar
--- import XMonad.Hooks.StatusBar.PP
-
--- Imports for Polybar --
-import qualified Codec.Binary.UTF8.String              as UTF8
-import qualified DBus                                  as D
-import qualified DBus.Client                           as D
 
 import XMonad.Layout
 import XMonad.Layout.ThreeColumns
@@ -52,42 +50,15 @@ import XMonad.Prompt.FuzzyMatch (fuzzyMatch, fuzzySort)
 import XMonad.Prompt.Input
 import XMonad.Prompt.Shell
 
--- mySB = statusBarProp "xmobar ~/.xmonad/xmobarrc" (pure myPPConfig)
-
 main :: IO ()
-main = do
-  --forM_ [".xmonad-workspace-log", ".xmonad-title-log"] $ \file -> do
-  --  safeSpawn "mkfifo" ["/tmp/" ++ file]
-
-  dbus <- mkDbusClient
-
-  xmonad
-     . withNavigation2DConfig def
-     . ewmhFullscreen
-     . ewmh
-     . docks
---     . withSB mySB
-     $ myXConfig dbus
+main = 
+  mkDbusClient >>= xmonad
+    . withNavigation2DConfig def
+    . ewmhFullscreen
+    . ewmh
+    . docks
+    . myXConfig
   
-mkDbusClient :: IO D.Client
-mkDbusClient = do
-  dbus <- D.connectSession
-  D.requestName dbus (D.busName_ "org.xmonad.log") opts
-  return dbus
- where
-  opts = [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
-
--- Emit a DBus signal on log updates
-dbusOutput :: D.Client -> String -> IO ()
-dbusOutput dbus str =
-  let opath  = D.objectPath_ "/org/xmonad/Log"
-      iname  = D.interfaceName_ "org.xmonad.Log"
-      mname  = D.memberName_ "Update"
-      signal = (D.signal opath iname mname)
-      body   = [D.toVariant $ UTF8.decodeString str]
-  in  D.emit dbus $ signal { D.signalBody = body }
-
-
 myXConfig dbus = def
   { terminal           = "alacritty"
   , modMask            = mod4Mask
@@ -118,18 +89,18 @@ myXPConfig = def
   }
 
 myPPConfig dbus = def
-  { ppCurrent = \w -> "%{o#fabd2f}%{+o}%{F#fabd2f}>" ++ w ++ ">%{F-}%{-o}"
-  , ppHidden = \w -> " %{F#b16286}" ++ w ++ "%{F-} "
+  { ppCurrent         = \w -> "%{o#fabd2f}%{+o}%{F#fabd2f}>" ++ w ++ ">%{F-}%{-o}"
+  , ppHidden          = \w -> " %{F#b16286}" ++ w ++ "%{F-} "
   , ppHiddenNoWindows = \w -> " " ++ w ++ " "
-  , ppSep = ">>= "
-  , ppWsSep = "|"
-  , ppTitle = \t -> shorten 50 t
-  , ppLayout = const ""
-  , ppOrder = \[w, l, t] -> [w, t]
-  , ppOutput = dbusOutput dbus
+  , ppSep             = ">>= "
+  , ppWsSep           = "|"
+  , ppTitle           = \t -> shorten 50 t
+  , ppLayout          = const ""
+  , ppOrder           = \[w, l, t] -> [w, t]
+  , ppOutput          = dbusOutput dbus
   }
 
-myWorkspaces = digitKeys -- ["\63083", "\63288", "\63306", "\61723", "\63107", "\63601", "\63391", "\61713", "\61884"]
+myWorkspaces = digitKeys
 
 myKeymap = \c
   -> appKeys c
@@ -206,7 +177,6 @@ popupKeys =
   , ("M-s"  , spawn leftPopup)
   , ("M-S-s", spawn ewwclose )  
   , ("M-v"  , spawn clipboard)
-  -- , ("M-b"  , spawn bartoggle)
   , ("M-b"  , sendMessage ToggleStruts)
   ]
   where
@@ -214,7 +184,6 @@ popupKeys =
     ewwclose  = "exec ~/bin/eww close-all"
     leftPopup = "exec ~/bin/eww open-many weather_side time_side smol_calendar player_side sys_side sliders_side"    
     clipboard = "rofi -modi \"clipboard:greenclip print\" -show clipboard -run-command '{cmd}' -theme ~/.xmonad/rofi/style.rasi"
-    -- bartoggle = "exec ~/bin/bartoggle"
 
 audioKeys =
   [ ("<XF86AudioPlay>", spawn "playerctl play-pause" )
@@ -259,20 +228,36 @@ myLayoutHook = avoidStruts
     delta = 5 / 100
 
 myManageHook = composeAll
-  [ --isTelegram --> moveToThird
-    isDialog   --> doFloat
-  , className =? "Tint2" --> doIgnore
-  , className =? "Polybar" --> doLower
+  [ isDialog  --> doFloat
+  , isPolybar --> doLower
   ]
   where
-    isTelegram = className =? "TelegramDesktop"
-
--- moveToThird = doF $ W.shift (myWorkspaces !! 2)
+    isPolybar = className =? "Polybar"
 
 myLogHook dbus = dynamicLogWithPP $ myPPConfig dbus
 
+moveTo i = doF $ W.shift (myWorkspaces !! i)
+
 digitKeys :: [String]
 digitKeys = map (:[]) ['1'..'9']
+
+mkDbusClient :: IO D.Client
+mkDbusClient = do
+  dbus <- D.connectSession
+  D.requestName dbus (D.busName_ "org.xmonad.log") opts
+  return dbus
+ where
+  opts = [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
+
+-- Emit a DBus signal on log updates
+dbusOutput :: D.Client -> String -> IO ()
+dbusOutput dbus str =
+  let opath  = D.objectPath_ "/org/xmonad/Log"
+      iname  = D.interfaceName_ "org.xmonad.Log"
+      mname  = D.memberName_ "Update"
+      signal = (D.signal opath iname mname)
+      body   = [D.toVariant $ UTF8.decodeString str]
+  in  D.emit dbus $ signal { D.signalBody = body }
 
 class MyPrompt a where
   name    :: String
