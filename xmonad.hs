@@ -135,7 +135,7 @@ layoutKeys =
   [ ("M-<Up>"    , withFocused (sendMessage . maximizeRestore))
   , ("M-<Down>"  , withFocused minimizeWindow                 )
   , ("M-S-<Down>", withLastMinimized maximizeWindowAndFocus   )
-  , ("M-t"       , withFocused $ windows . W.sink             )
+  , ("M-S-t"     , withFocused $ windows . W.sink             )
   , ("M-l"       , sendMessage NextLayout                     )
   ] ++
   [("M-C-" ++ k, sendMessage $ JumpToLayout l)
@@ -149,11 +149,13 @@ workspaceKeys =
   ]
 
 appKeys = \c ->
-  [ ("M-S-c"       , kill              ) 
-  , ("M-S-<Return>", spawn $ terminal c)
-  , ("M-e"         , spawn "nautilus"  )
-  , ("M-f"         , spawn "firefox"   )
-  , ("M-w"         , spawn "codium"    )
+  [ ("M-S-c"       , kill                    ) 
+  , ("M-S-<Return>", spawn $ terminal c      )
+  , ("M-e"         , spawn "nautilus"        )
+  , ("M-f"         , spawn "firefox"         )
+  , ("M-w"         , spawn "codium"          )
+  , ("M-t"         , spawn "telegram-desktop")
+  , ("M-d"         , spawn "discord"         )
   ]  
 
 screenshotKeys = 

@@ -29,7 +29,7 @@ Layouts
 * `M-<Up>` - toggle maximize
 * `M-<Down>` - minimize window
 * `M-S-<Down>` - restore last minimized window and focus on it
-* `M-t` - force window to tiling mode
+* `M-S-t` - force window to tiling mode
 * `M-l` - switch to next layout
 * `M-C-1` - 1st layout (Tall)
 * `M-C-2` - 2nd layout (ThreeColMid)
@@ -48,6 +48,8 @@ Application keys
 * `M-e` - start Nautilus
 * `M-f` - start Firefox
 * `M-w` - start VSCodium
+* `M-t` - start Telegram
+* `M-w` - start Discord
 
 Pop-up keys
 
