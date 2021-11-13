@@ -75,7 +75,7 @@ date = %A, %d-%m-%Y
 time = %H:%M
 
 format-foreground = ${colors.b-yellow}
-label = %date% %time%
+label = =<< %date% %time% >>=
 
 [module/xkeyboard]
 type = internal/xkeyboard

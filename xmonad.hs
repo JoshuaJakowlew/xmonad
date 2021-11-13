@@ -118,14 +118,12 @@ myXPConfig = def
   }
 
 myPPConfig dbus = def
-  { ppCurrent = \w -> "[%{F#ff0}" ++ w ++ "%{F-}]"
-  , ppHidden = \w -> w
-  , ppHiddenNoWindows = \w -> "[%{F#f0f}" ++ w ++ "%{F-}]"
-  , ppVisibleNoWindows = Just $ \w -> "[%{F#f00}" ++ w ++ "%{F-}]"
-  , ppUrgent = \w -> "[%{F#f00}" ++ w ++ "%{F-}]"
-  , ppSep = "@"
-  , ppWsSep = " | "
-  , ppTitle = \t -> shorten 25 t
+  { ppCurrent = \w -> "%{o#fabd2f}%{+o}%{F#fabd2f}>" ++ w ++ ">%{F-}%{-o}"
+  , ppHidden = \w -> " %{F#b16286}" ++ w ++ "%{F-} "
+  , ppHiddenNoWindows = \w -> " " ++ w ++ " "
+  , ppSep = ">>= "
+  , ppWsSep = "|"
+  , ppTitle = \t -> shorten 50 t
   , ppLayout = const ""
   , ppOrder = \[w, l, t] -> [w, t]
   , ppOutput = dbusOutput dbus
@@ -212,10 +210,10 @@ popupKeys =
   , ("M-b"  , sendMessage ToggleStruts)
   ]
   where
-    launcher  = "rofi -no-lazy-grab -show drun -modi run,drun,window -theme $HOME/.config/rofi/launcher/style"
+    launcher  = "rofi -no-lazy-grab -show drun -modi run,drun,window -theme ~/.xmonad/rofi/style.rasi"
     ewwclose  = "exec ~/bin/eww close-all"
     leftPopup = "exec ~/bin/eww open-many weather_side time_side smol_calendar player_side sys_side sliders_side"    
-    clipboard = "rofi -modi \"clipboard:greenclip print\" -show clipboard -run-command '{cmd}' -theme ~/.config/rofi/launcher/style.rasi"
+    clipboard = "rofi -modi \"clipboard:greenclip print\" -show clipboard -run-command '{cmd}' -theme ~/.xmonad/rofi/style.rasi"
     -- bartoggle = "exec ~/bin/bartoggle"
 
 audioKeys =
