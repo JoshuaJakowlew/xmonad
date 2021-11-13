@@ -44,6 +44,7 @@ import XMonad.Layout.Gaps
 import XMonad.Actions.Minimize
 import XMonad.Actions.Navigation2D
 import XMonad.Actions.Search
+import XMonad.Actions.Submap
 
 import XMonad.Prompt
 import XMonad.Prompt.FuzzyMatch (fuzzyMatch, fuzzySort)
@@ -104,6 +105,7 @@ myWorkspaces = digitKeys
 
 myKeymap = \c
   -> appKeys c
+  ++ webpageKeys c
   ++ windowsFocus
   ++ windowsSwap
   ++ layoutKeys
@@ -157,6 +159,24 @@ appKeys = \c ->
   , ("M-t"         , spawn "telegram-desktop")
   , ("M-d"         , spawn "discord"         )
   ]  
+
+webpageKeys = \c ->
+  [ ("M-p", submap $ mkKeymap c keymap)
+  ]
+  where
+    keymap = 
+      [ ("a", openPage aur       )
+      , ("h", openPage hoogle    )
+      , ("y", openPage youtube   )
+      , ("v", openPage vkMessages)
+      ]
+    
+    openPage p = spawn $ "firefox " ++ p
+
+    aur        = "https://aur.archlinux.org/"
+    hoogle     = "https://hoogle.haskell.org/"
+    youtube    = "https://www.youtube.com/"
+    vkMessages = "https://vk.com/im"
 
 screenshotKeys = 
   [ ("<Print>"    , spawn $ select     ++ toClip)

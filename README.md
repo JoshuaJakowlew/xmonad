@@ -51,6 +51,13 @@ Application keys
 * `M-t` - start Telegram
 * `M-w` - start Discord
 
+Webpage keys
+
+* `M-p a` - open [AUR](https://aur.archlinux.org/)
+* `M-p a` - open [Hoogle](https://hoogle.haskell.org/)
+* `M-p a` - open [YouTube](https://www.youtube.com/)
+* `M-p a` - open [Vk Messages](https://vk.com/im)
+
 Pop-up keys
 
 * `M-o` - spawn rofi-launcher
