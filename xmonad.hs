@@ -250,15 +250,19 @@ myLayoutHook = avoidStruts
     delta = 5 / 100
 
 myManageHook = composeAll
-  [ isDialog  --> doFloat
-  , isPolybar --> doLower
+  [ isDialog   --> doFloat
+  , isPolybar  --> doLower
+  , isPicInPic --> doPicInPic
   ]
-  where
-    isPolybar = className =? "Polybar"
 
-myLogHook dbus = dynamicLogWithPP $ myPPConfig dbus
+isPolybar  = className =? "Polybar"
+isPicInPic = title     =? "Picture-in-Picture"
+
+doPicInPic = hasBorder False >> doSideFloat SE
 
 moveTo i = doF $ W.shift (myWorkspaces !! i)
+
+myLogHook dbus = dynamicLogWithPP $ myPPConfig dbus
 
 digitKeys :: [String]
 digitKeys = map (:[]) ['1'..'9']
