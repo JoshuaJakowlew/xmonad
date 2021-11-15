@@ -57,6 +57,8 @@ Webpage keys
 * `M-p a` - open [Hoogle](https://hoogle.haskell.org/)
 * `M-p a` - open [YouTube](https://www.youtube.com/)
 * `M-p a` - open [Vk Messages](https://vk.com/im)
+* `M-p a` - open [GoogleMail](https://mail.google.com/)
+* `M-p a` - open [Google Calendar](https://calendar.google.com)
 
 Pop-up keys
 

@@ -169,6 +169,8 @@ webpageKeys = \c ->
       , ("h", openPage hoogle    )
       , ("y", openPage youtube   )
       , ("v", openPage vkMessages)
+      , ("m", openPage gMail     )
+      , ("c", openPage gCalendar )
       ]
     
     openPage p = spawn $ "firefox " ++ p
@@ -177,6 +179,8 @@ webpageKeys = \c ->
     hoogle     = "https://hoogle.haskell.org/"
     youtube    = "https://www.youtube.com/"
     vkMessages = "https://vk.com/im"
+    gMail      = "https://mail.google.com/"
+    gCalendar  = "https://calendar.google.com"
 
 screenshotKeys = 
   [ ("<Print>"    , spawn $ select     ++ toClip)
