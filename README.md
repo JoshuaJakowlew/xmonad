@@ -76,6 +76,9 @@ Screenshots
 * `M-<Print>` - selection (to file)
 * `M-S-<Print>` - fullscreen (to file)
 * `M-C-<Print>` - active window (to file)
+* `M1-<Print>` - selection (to Annotator)
+* `M1-S-<Print>` - fullscreen (to Annotator)
+* `M1-C-<Print>` - active window (to Annotator)
 
 Audio keys
 

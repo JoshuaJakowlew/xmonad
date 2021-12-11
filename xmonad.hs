@@ -3,7 +3,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE RankNTypes          #-}
 {-# LANGUAGE FlexibleContexts    #-}
-
+{-# LANGUAGE BlockArguments      #-}
 module Main where
 
 import qualified Data.Map as M
@@ -26,6 +26,7 @@ import XMonad.Util.SpawnOnce (spawnOnce, spawnOnOnce)
 import XMonad.Util.Loggers
 import XMonad.Util.Run (safeSpawn)
 import XMonad.Util.NamedWindows (getName)
+import XMonad.Util.PureX (toX)
 
 import XMonad.Hooks.EwmhDesktops (ewmh, ewmhFullscreen)
 import XMonad.Hooks.ManageHelpers
@@ -45,6 +46,7 @@ import XMonad.Actions.Minimize
 import XMonad.Actions.Navigation2D
 import XMonad.Actions.Search
 import XMonad.Actions.Submap
+import XMonad.Actions.DynamicWorkspaces
 
 import XMonad.Prompt
 import XMonad.Prompt.FuzzyMatch (fuzzyMatch, fuzzySort)
@@ -109,7 +111,8 @@ myKeymap = \c
   ++ windowsFocus
   ++ windowsSwap
   ++ layoutKeys
-  ++ workspaceKeys
+  ++ workspaceSwitchKeys
+  ++ workspaceKeys c
   ++ screenshotKeys
   ++ promptKeys
   ++ popupKeys
@@ -144,11 +147,22 @@ layoutKeys =
   | (k, l) <- zip digitKeys [ "Tall", "ThreeCol", "Grid", "Full"]
   ]
 
-workspaceKeys =
+workspaceSwitchKeys =
   [ ("M-" ++ m ++ k, windows $ f i)
   | (i, k) <- zip myWorkspaces digitKeys
   , (f, m) <- [(W.greedyView, ""), (W.shift, "S-")]
   ]
+
+workspaceKeys = \c ->
+  [ ("M-S-w", submap $ mkKeymap c keymap)
+  ]
+  where
+    keymap = 
+      [ ("g", gamingWorkspace)
+      , ("S-g", removeWorkspaceByTag "Game")
+      , ("q", selectWorkspace myXPConfig)
+      ]
+    gamingWorkspace = addWorkspace "Game" >> spawn "steam" >> spawn "discord"
 
 appKeys = \c ->
   [ ("M-S-c"       , kill                    ) 
@@ -158,6 +172,7 @@ appKeys = \c ->
   , ("M-w"         , spawn "codium"          )
   , ("M-t"         , spawn "telegram-desktop")
   , ("M-d"         , spawn "discord"         )
+  , ("M-a"         , spawn "annotator"       )      
   ]  
 
 webpageKeys = \c ->
@@ -190,6 +205,10 @@ screenshotKeys =
   , ("M-<Print>"  , spawn $ select     ++ toFile)
   , ("M-S-<Print>", spawn $ fullscreen ++ toFile)
   , ("M-C-<Print>", spawn $ active     ++ toFile)
+
+  , ("M1-<Print>"  , spawn $ select     ++ toClip ++ toEdit)
+  , ("M1-S-<Print>", spawn $ fullscreen ++ toClip ++ toEdit)
+  , ("M1-C-<Print>", spawn $ active     ++ toClip ++ toEdit)
   ]
   where
     fullscreen = "maim -u"
@@ -197,6 +216,7 @@ screenshotKeys =
     active = "maim -u -i $(xdotool getactivewindow)"
     toClip = " | xclip -selection clipboard -t image/png"
     toFile = " ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"
+    toEdit = " && com.github.phase1geo.annotator --use-clipboard"
 
 popupKeys =
   [ ("M-o"  , spawn launcher )
