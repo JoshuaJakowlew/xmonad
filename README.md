@@ -72,13 +72,12 @@ Screenshots
 
 * `<Print>` - selection (to clipboard)
 * `S-<Print>` - fullscreen (to clipboard)
-* `C-<Print>` - active window (to clipboard)
-* `M-<Print>` - selection (to file)
-* `M-S-<Print>` - fullscreen (to file)
-* `M-C-<Print>` - active window (to file)
-* `M1-<Print>` - selection (to Annotator)
-* `M1-S-<Print>` - fullscreen (to Annotator)
-* `M1-C-<Print>` - active window (to Annotator)
+* `M-<Print>` - selection (to Annotator)
+* `M-S-<Print>` - fullscreen (to Annotator)
+* `M1-<Print>` - selection (to OCR)
+* `M1-S-<Print>` - fullscreen (to OCR)
+* `C-<Print>` - selection (to file)
+* `C-S-<Print>` - fullscreen (to file)
 
 Audio keys
 

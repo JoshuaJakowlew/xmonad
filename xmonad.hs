@@ -198,25 +198,27 @@ webpageKeys = \c ->
     gCalendar  = "https://calendar.google.com"
 
 screenshotKeys = 
-  [ ("<Print>"    , spawn $ select     ++ toClip)
-  , ("S-<Print>"  , spawn $ fullscreen ++ toClip)
-  , ("C-<Print>"  , spawn $ active     ++ toClip)
+  [ ("<Print>"    , spawn $ select     ++ toClipImg)
+  , ("S-<Print>"  , spawn $ fullscreen ++ toClipImg)
  
-  , ("M-<Print>"  , spawn $ select     ++ toFile)
-  , ("M-S-<Print>", spawn $ fullscreen ++ toFile)
-  , ("M-C-<Print>", spawn $ active     ++ toFile)
+  , ("M-<Print>"  , spawn $ select     ++ toClipImg ++ toEdit)
+  , ("M-S-<Print>", spawn $ fullscreen ++ toClipImg ++ toEdit)
 
-  , ("M1-<Print>"  , spawn $ select     ++ toClip ++ toEdit)
-  , ("M1-S-<Print>", spawn $ fullscreen ++ toClip ++ toEdit)
-  , ("M1-C-<Print>", spawn $ active     ++ toClip ++ toEdit)
+  , ("M1-<Print>"  , spawn $ select     ++ toOcr ++ toClip)
+  , ("M1-S-<Print>", spawn $ fullscreen ++ toOcr ++ toClip)
+
+  , ("C-<Print>"  , spawn $ select     ++ toFile)
+  , ("C-S-<Print>", spawn $ fullscreen ++ toFile)
   ]
   where
     fullscreen = "maim -u"
-    select = "maim -su"
-    active = "maim -u -i $(xdotool getactivewindow)"
-    toClip = " | xclip -selection clipboard -t image/png"
-    toFile = " ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"
-    toEdit = " && com.github.phase1geo.annotator --use-clipboard"
+    select     = "maim -su"
+    active     = "maim -u -i $(xdotool getactivewindow)"
+    toClip     = "| xclip -selection clipboard"
+    toClipImg  = toClip ++ " -t image/png"
+    toFile     = " ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"
+    toEdit     = " && com.github.phase1geo.annotator --use-clipboard"
+    toOcr      = "| tesseract stdin stdout -l osd+eng+rus --dpi 80 --psm 6 quiet"
 
 popupKeys =
   [ ("M-o"  , spawn launcher )
