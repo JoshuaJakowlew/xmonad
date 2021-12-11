@@ -1,4 +1,4 @@
-# mXMonad config
+# My XMonad config
 
 ## Keymap
 
