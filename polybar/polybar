@@ -51,8 +51,8 @@ underline-size = 2
 padding-left = 2.5%
 padding-right = 2.5%
 
-module-margin-left = 1%
-module-margin-right = 2%
+module-margin-left = 19px
+module-margin-right = 0%
 
 font-0 = Fira Code:style=Regular:pixelsize=10;1
 font-1 = fixed:pixelsize=10;1
@@ -85,18 +85,6 @@ format-foreground = ${colors.b-red}
 format-overline = ${colors.b-red}
 label-layout = =<< %layout% >>=
 
-[module/network]
-type = internal/network
-interface = wlan0
-interval = 3.0
-accumulate-stats = true
-unknown-as-up = true
-
-label-connected = NET%{F#b8bb26}%downspeed:9%%{F-}%{F#fb4934}%upspeed:9%%{F-}
-label-disconnected = not connected
-
-format-connected-overline = ${colors.n-cyan}
-
 [module/cpu]
 type = internal/cpu
 interval = 1
@@ -115,18 +103,3 @@ exec = ~/.xmonad/polybar/scripts/updates-pacman-aurhelper/updates-pacman-aurhelp
 interval = 600
 label = UPD %output%
 format-overline = ${colors.n-red}
-
-[module/player-mpris-simple]
-type = custom/script
-exec = ~/.xmonad/polybar/scripts/player-mpris-simple/player-mpris-simple.sh
-interval = 3
-click-left = playerctl previous &
-click-right = playerctl next &
-click-middle = playerctl play-pause &
-
-[module/info-hackspeed]
-type = custom/script
-exec = ~/.xmonad/polybar/scripts/info-hackspeed/info-hackspeed.sh
-tail = true
-label = "%output%"
-format-overline = ${colors.n-blue}
