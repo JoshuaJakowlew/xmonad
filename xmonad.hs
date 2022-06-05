@@ -187,16 +187,12 @@ screenshotKeys =
   , ("M-<Print>"  , spawn $ select     ++ toClipImg ++ toEdit)
   , ("M-S-<Print>", spawn $ fullscreen ++ toClipImg ++ toEdit)
 
-  , ("M1-<Print>"  , spawn $ selectOcr ++ toClip)
-  -- , ("M1-S-<Print>", spawn $ fullscreen ++ toOcr ++ toClip)
-
   , ("C-<Print>"  , spawn $ select     ++ toFile)
   , ("C-S-<Print>", spawn $ fullscreen ++ toFile)
   ]
   where
     fullscreen = "maim -u"
     select     = "maim -su"
-    selectOcr  = "convert x: -modulate 100,0 -resize 400% -set density 300 png:- | tesseract stdin stdout -l eng+rus --psm 3 quiet | sed 's/.$//'"
     active     = "maim -u -i $(xdotool getactivewindow)"
     toClip     = "| xclip -selection clipboard"
     toClipImg  = toClip ++ " -t image/png"

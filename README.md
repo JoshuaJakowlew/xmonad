@@ -76,7 +76,6 @@ Screenshots
 * `C-S-<Print>` - fullscreen (to file)
 * `M-<Print>` - selection (to Annotator)
 * `M-S-<Print>` - fullscreen (to Annotator)
-* `M1-<Print>` - selection (to OCR)
 
 Audio keys
 
