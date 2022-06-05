@@ -58,15 +58,42 @@ font-0 = Fira Code:style=Regular:pixelsize=10;1
 font-1 = fixed:pixelsize=10;1
 font-2 = Twitter Color Emoji:style=Regular:scale=10;1
 
-modules-left = xmonad
+modules-left = workspaces separator window
 modules-center = date
-modules-right = updates-pacman-aurhelper info-hackspeed cpu memory network xkeyboard
+modules-right = updates-pacman-aurhelper cpu memory xkeyboard
 
-[module/xmonad]
-type = custom/script
-exec = xmonad-log
+[module/workspaces]
+type = internal/xworkspaces
 
-tail = true
+pin-workspaces = true
+enable-click = true
+enable-scroll = true
+reverse-scroll = true
+
+format = <label-state>
+
+label-active = ">%name%>"
+label-active-foreground = ${colors.b-yellow}
+label-active-background = ${colors.background}
+label-active-overline = ${colors.b-yellow}
+
+label-occupied = " %name% "
+label-occupied-foreground = ${colors.n-magenta}
+;label-occupied-overline = ${colors.n-magenta}
+
+label-empty = " %name% "
+label-empty-foreground = ${colors.foreground}
+
+[module/separator]
+type = custom/text
+content = >>=
+
+[module/window]
+type = internal/xwindow
+format = <label>
+format-foreground = ${colors.foreground}
+label = %title%
+label-maxlen = 50
 
 [module/date]
 type = internal/date

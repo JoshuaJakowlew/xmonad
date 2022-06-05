@@ -4,17 +4,13 @@
 {-# LANGUAGE RankNTypes          #-}
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE BlockArguments      #-}
+
 module Main where
 
 import qualified Data.Map as M
 import Data.List (sortBy)
 import Data.Function (on)
 import Control.Monad (forM_, join)
-
--- Imports for Polybar --
-import qualified Codec.Binary.UTF8.String              as UTF8
-import qualified DBus                                  as D
-import qualified DBus.Client                           as D
 
 import XMonad
 import qualified XMonad.StackSet as W
@@ -55,14 +51,14 @@ import XMonad.Prompt.Shell
 
 main :: IO ()
 main = 
-  mkDbusClient >>= xmonad
-    . withNavigation2DConfig def
-    . ewmhFullscreen
-    . ewmh
-    . docks
-    . myXConfig
+  xmonad
+    $ withNavigation2DConfig def
+    $ ewmhFullscreen
+    $ ewmh
+    $ docks
+    $ myXConfig
   
-myXConfig dbus = def
+myXConfig = def
   { terminal           = "alacritty"
   , modMask            = mod4Mask
   , workspaces         = myWorkspaces
@@ -76,7 +72,6 @@ myXConfig dbus = def
   , startupHook        = myStartupHook
   , layoutHook         = myLayoutHook
   , manageHook         = manageHook def <+> myManageHook
-  , logHook = myLogHook dbus
   }
 
 myXPConfig = def
@@ -89,18 +84,6 @@ myXPConfig = def
   , height            = 30
   , searchPredicate   = fuzzyMatch
   , sorter            = fuzzySort
-  }
-
-myPPConfig dbus = def
-  { ppCurrent         = \w -> "%{o#fabd2f}%{+o}%{F#fabd2f}>" ++ w ++ ">%{F-}%{-o}"
-  , ppHidden          = \w -> " %{F#b16286}" ++ w ++ "%{F-} "
-  , ppHiddenNoWindows = \w -> " " ++ w ++ " "
-  , ppSep             = ">>= "
-  , ppWsSep           = "|"
-  , ppTitle           = \t -> shorten 50 t
-  , ppLayout          = const ""
-  , ppOrder           = \[w, l, t] -> [w, t]
-  , ppOutput          = dbusOutput dbus
   }
 
 myWorkspaces = digitKeys
@@ -288,28 +271,8 @@ doPicInPic = hasBorder False >> doSideFloat SE
 
 moveTo i = doF $ W.shift (myWorkspaces !! i)
 
-myLogHook dbus = dynamicLogWithPP $ myPPConfig dbus
-
 digitKeys :: [String]
 digitKeys = map (:[]) ['1'..'9']
-
-mkDbusClient :: IO D.Client
-mkDbusClient = do
-  dbus <- D.connectSession
-  D.requestName dbus (D.busName_ "org.xmonad.log") opts
-  return dbus
- where
-  opts = [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
-
--- Emit a DBus signal on log updates
-dbusOutput :: D.Client -> String -> IO ()
-dbusOutput dbus str =
-  let opath  = D.objectPath_ "/org/xmonad/Log"
-      iname  = D.interfaceName_ "org.xmonad.Log"
-      mname  = D.memberName_ "Update"
-      signal = (D.signal opath iname mname)
-      body   = [D.toVariant $ UTF8.decodeString str]
-  in  D.emit dbus $ signal { D.signalBody = body }
 
 class MyPrompt a where
   name    :: String
