@@ -54,11 +54,11 @@ Application keys
 Webpage keys
 
 * `M-p a` - open [AUR](https://aur.archlinux.org/)
-* `M-p a` - open [Hoogle](https://hoogle.haskell.org/)
-* `M-p a` - open [YouTube](https://www.youtube.com/)
-* `M-p a` - open [Vk Messages](https://vk.com/im)
-* `M-p a` - open [GoogleMail](https://mail.google.com/)
-* `M-p a` - open [Google Calendar](https://calendar.google.com)
+* `M-p h` - open [Hoogle](https://hoogle.haskell.org/)
+* `M-p y` - open [YouTube](https://www.youtube.com/)
+* `M-p v` - open [Vk Messages](https://vk.com/im)
+* `M-p m` - open [GoogleMail](https://mail.google.com/)
+* `M-p c` - open [Google Calendar](https://calendar.google.com)
 
 Pop-up keys
 
