@@ -220,8 +220,6 @@ audioKeys =
 
 promptKeys = 
   [ ("M-x"    , shellPrompt myXPConfig)
-  , ("M-z"    , buildPrompt @RunScript)
-  , ("M-S-x s", searchPrompt          )
   ]
 
 myStartupHook = do
@@ -280,17 +278,3 @@ buildPrompt = inputPromptWithCompl myXPConfig (name @a) promptCompl ?+ (handler 
   where
     promptCompl = mkComplFunFromList' myXPConfig (compl @a)
     
-searchPrompt = promptSearchBrowser myXPConfig "firefox" duckduckgo
-
-data RunScript
-
-instance MyPrompt RunScript where
-  name  = "Script"
-  compl = ["Test"]
-  
-  handler input = spawn script
-    where
-      script = M.findWithDefault "" input scriptMap
-      scriptMap = M.fromList
-        [ ("Test", "python ~/.xmonad/scripts/test.py")
-        ]

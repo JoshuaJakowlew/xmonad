@@ -86,5 +86,3 @@ Audio keys
 Prompt
 
 * `M-x` - shell prompt
-* `M-z` - action prompt
-* `M-S-x s` - web search prompt
